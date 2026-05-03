@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Bodas de Ouro - José & Maria</title>
 
+  <!-- Emoji como Logo da Guia (Favicon) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💍</text></svg>">
+
   <!-- Fontes elegantes -->
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
 
@@ -44,16 +47,14 @@
       border: 1px solid #eee;
     }
 
-    /* Animação suave para transição entre páginas */
-    .slide-fade {
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    /* Animação suave */
+    .fade-in {
+      animation: fadeIn 0.6s ease forwards;
     }
 
-    .slide-fade-in {
-      opacity: 1;
-      transform: translateY(0);
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h1 {
@@ -156,7 +157,7 @@
 <body>
 
   <!-- Página 1 -->
-  <div id="pagina1" class="card slide-fade slide-fade-in">
+  <div id="pagina1" class="card fade-in">
     <div class="subtitulo">COMEMORAMOS NOSSAS</div>
     <h1>Bodas de Ouro</h1>
     <div class="divisor"></div>
@@ -173,7 +174,7 @@
   </div>
 
   <!-- Página 2 -->
-  <div id="pagina2" class="card hidden slide-fade">
+  <div id="pagina2" class="card hidden">
     <h1>Confirmação</h1>
     <p style="color: #666; margin-bottom: 10px; font-size: 0.9em;">Será uma alegria ter você conosco!</p>
     <input type="text" placeholder="Seu nome completo" id="nome">
@@ -189,7 +190,7 @@
   </div>
 
   <!-- Página 3 -->
-  <div id="pagina3" class="card hidden slide-fade">
+  <div id="pagina3" class="card hidden">
     <span class="icon-celebration">⚭</span>
     <h1>Confirmado!</h1>
     <div class="mensagem-final" id="mensagemFinal"></div>
@@ -198,24 +199,14 @@
   </div>
 
   <script>
-    // URL do seu Google Apps Script (certifique-se que ela termina em /exec)
-    const URL_GOOGLE = "https://script.google.com/macros/s/AKfycbxG-OpIosWORD2_LUNb3zf_IX2uBiBzEyc0-JiWM2rKI-3GDm0sMuEf4JCYKKv32EKF/exec";
+    // URL ATUALIZADA do seu Google Apps Script
+    const URL_GOOGLE = "https://script.google.com/macros/s/AKfycbxYFff9bV7MsxYZspEY22BMIsM2XDhqQ2yBloPvUkwCrgvn4wEb-mBIxJSIWn1Pr5Aq/exec";
 
     function irParaFormulario() {
-      // Inicia a transição de saída da página 1
-      const p1 = document.getElementById("pagina1");
-      p1.classList.remove("slide-fade-in");
-      
-      // Espera a animação de saída e troca de página
-      setTimeout(() => {
-        p1.classList.add("hidden");
-        
-        const p2 = document.getElementById("pagina2");
-        p2.classList.remove("hidden");
-        // Força o navegador a renderizar o elemento antes de iniciar a animação
-        void p2.offsetWidth; 
-        p2.classList.add("slide-fade-in");
-      }, 500); 
+      document.getElementById("pagina1").classList.add("hidden");
+      const p2 = document.getElementById("pagina2");
+      p2.classList.remove("hidden");
+      p2.classList.add("fade-in");
     }
 
     function confirmar() {
@@ -232,38 +223,26 @@
       btn.innerText = "Enviando...";
       btn.disabled = true;
 
-      // Monta a URL completa para o envio via método GET
+      // Monta a URL com os parâmetros para o envio via GET
       const urlEnvio = `${URL_GOOGLE}?nome=${encodeURIComponent(nome)}&quantidade=${encodeURIComponent(qtd)}`;
 
-      // Envia os dados para a planilha usando fetch e modo 'no-cors' para evitar erros de redirecionamento do GAS
+      // Envia os dados para a planilha usando fetch e modo 'no-cors'
       fetch(urlEnvio, {
         method: 'GET',
-        mode: 'no-cors' // Essencial para evitar erros de CORS com o Google Apps Script
+        mode: 'no-cors'
       })
       .then(() => {
-        // Como o modo é 'no-cors', não podemos ler a resposta,
-        // então assumimos que funcionou.
-        
-        // Inicia a transição de saída da página 2
-        const p2 = document.getElementById("pagina2");
-        p2.classList.remove("slide-fade-in");
-        
-        // Espera a animação de saída e troca de página
-        setTimeout(() => {
-          p2.classList.add("hidden");
-          
-          const p3 = document.getElementById("pagina3");
-          p3.classList.remove("hidden");
-          void p3.offsetWidth;
-          p3.classList.add("slide-fade-in");
+        // Transição de página
+        document.getElementById("pagina2").classList.add("hidden");
+        const p3 = document.getElementById("pagina3");
+        p3.classList.remove("hidden");
+        p3.classList.add("fade-in");
 
-          // Atualiza a mensagem final
-          document.getElementById("mensagemFinal").innerHTML =
-            "<strong>" + nome + "</strong>, sua presença foi confirmada para <strong>" + qtd + " pessoa(s)</strong>.<br><br>Aguardamos você no dia 25 de JULHO!";
-        }, 500);
+        // Atualiza a mensagem final
+        document.getElementById("mensagemFinal").innerHTML =
+          "<strong>" + nome + "</strong>, sua presença foi confirmada para <strong>" + qtd + " pessoa(s)</strong>.<br><br>Aguardamos você no dia 25 de JULHO!";
       })
       .catch(err => {
-        // Caso haja um erro real (como falta de internet)
         alert("Houve um erro ao enviar sua confirmação. Por favor, tente novamente.");
         btn.innerText = "Confirmar Agora";
         btn.disabled = false;
