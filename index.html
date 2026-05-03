@@ -41,7 +41,7 @@
       max-width: 400px;
       position: relative;
       border: 1px solid #eee;
-      overflow: hidden;
+      overflow: hidden; /* Mantém os ramos dentro do card */
     }
 
     /* Ramos nos cantos (SVG para leveza) */
@@ -177,7 +177,7 @@
   </div>
 
   <script>
-    // --- SEU LINK DE IMPLANTAÇÃO JÁ INTEGRADO AQUI ---
+    // URL DE IMPLANTAÇÃO DEFINITIVA DO SEU SCRIPT (Integrada)
     const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbxYFff9bV7MsxYZspEY22BMIsM2XDhqQ2yBloPvUkwCrgvn4wEb-mBIxJSIWn1Pr5Aq/exec";
 
     function irParaFormulario() {
@@ -197,21 +197,25 @@
         return;
       }
 
-      // Feedback visual
+      // Feedback visual e bloqueio do botão
       btn.innerText = "Enviando...";
       btn.disabled = true;
 
-      // Monta a URL completa para o envio via GET (nome=...&quantidade=...)
+      // Monta a URL completa para o envio via método GET (nome=...&quantidade=...)
+      // Usamos GET com mode: no-cors porque é a forma mais robusta e universal 
+      // de enviar dados para o doGet do GAS sem esbarrar em bloqueios do navegador.
       const urlEnvio = `${URL_GOOGLE_SCRIPT}?nome=${encodeURIComponent(nome)}&quantidade=${encodeURIComponent(qtd)}`;
 
-      // Envia os dados para a planilha usando fetch com modo 'no-cors' (MÉTODO GET DEFINTIVO)
+      // Envia os dados para a planilha
       fetch(urlEnvio, {
         method: 'GET',
         mode: 'no-cors' // Imprescindível para o Google Apps Script
       })
       .then(() => {
-        // Transição de página (assumimos sucesso com 'no-cors')
-        // O modo 'no-cors' não permite ler o texto de resposta, mas a requisição CHEGA no script.
+        // Como o modo é 'no-cors', não podemos ler a resposta de texto,
+        // mas assumimos que chegou (o fetch só falha se não houver conexão real).
+        
+        // Transição de página
         document.getElementById("pagina2").classList.add("hidden");
         const p3 = document.getElementById("pagina3");
         p3.classList.remove("hidden");
@@ -222,7 +226,7 @@
           "<strong>" + nome + "</strong>, sua presença foi confirmada para <strong>" + qtd + " pessoa(s)</strong>.<br><br>Aguardamos você no dia 25 de JULHO!";
       })
       .catch(error => {
-        // Erro real na requisição (ex: sem internet)
+        // Caso haja um erro real (como falta de internet ou erro DNS)
         console.error('Erro de conexão:', error);
         alert("Houve um erro de conexão ao enviar sua confirmação. Por favor, tente novamente.");
         btn.innerText = "Confirmar Agora";
