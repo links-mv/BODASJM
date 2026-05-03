@@ -1,60 +1,234 @@
-/**
- * O SISTEMA DE CONFIRMAÇÃO DEFINITIVO (MÉTODO GET)
- * 
- * Este script usa doGet para receber dados via parâmetros de URL,
- * que é o método mais estável para evitar erros de CORS e redirecionamento.
- */
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Bodas de Ouro - José Angelo & Maria Aparecida</title>
+  
+  <!-- Emoji como Logo da Guia (Favicon) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💍</text></svg>">
 
-// --- CONFIGURAÇÃO MANUAL ---
-var "1yB3pL_3xHamstuQwNreLdOluvRRnr_wuacVedDLpG9M"; // Substitua com o ID real
-var NOME_ABA = "Resultados"; // Nome exato da aba na planilha
-
-function doGet(e) {
-  // Configurações de Bloqueio para evitar gravação simultânea
-  var lock = LockService.getScriptLock();
-  try {
-    lock.tryLock(30000); // Espera até 30 segundos pelo bloqueio
-    
-    // Abre a planilha usando o ID hardcoded para total segurança
-    var ss = SpreadsheetApp.openById(ID_DA_PLANILHA);
-    var sheet = ss.getSheetByName(NOME_ABA);
-    
-    // Verificação de segurança: Se a aba não existir, ele cria na hora
-    if (!sheet) {
-      sheet = ss.insertSheet(NOME_ABA);
-      sheet.appendRow(["Data e Hora", "Nome do Convidado", "Quantidade de Pessoas"]);
-    } else if (sheet.getLastRow() === 0) {
-      // Se tiver vazia, coloca os cabeçalhos
-      sheet.appendRow(["Data e Hora", "Nome do Convidado", "Quantidade de Pessoas"]);
+  <!-- Fontes elegantes -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --verde-escuro: #0a3622;
+      --verde-medio: #198754;
+      --dourado-ramos: #d4af37;
+      --dourado-gradiente: linear-gradient(45deg, #a67c00, #d4af37, #b8860b, #d4af37, #a67c00);
+      --sombra: 0 10px 30px rgba(0,0,0,0.3);
     }
 
-    // EXTRAÇÃO DOS DADOS (Pega os parâmetros enviados pela URL do HTML)
-    // O HTML envia assim: .../exec?nome=NomeAqui&quantidade=QtdAqui
-    var nome = e.parameter.nome;
-    var quantidade = e.parameter.quantidade;
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-    console.log("Processando dados: Nome=" + nome + ", Qtd=" + quantidade);
-
-    // GRAVAÇÃO NA PLANILHA
-    if (nome && cantidad) {
-      var dataAtual = new Date();
-      // Adiciona na próxima linha disponível: [Data, Nome, Quantidade]
-      sheet.appendRow([dataAtual, nome, quantidade]);
-      SpreadsheetApp.flush(); // Força a gravação imediata
-      
-      // Retorna uma resposta amigável para o navegador
-      return ContentService.createTextOutput("Sucesso! Presença confirmada para " + nome)
-        .setMimeType(ContentService.MimeType.TEXT);
-    } else {
-      throw new Error("Dados incompletos recebidos.");
+    body {
+      margin: 0; padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at center, #1e4d35 0%, #0a2417 100%);
+      height: 100vh;
+      display: flex; justify-content: center; align-items: center;
+      overflow: hidden;
     }
-    
-  } catch (error) {
-    console.log("Erro no doGet: " + error);
-    // Retorna a mensagem de erro
-    return ContentService.createTextOutput("Erro: " + error.message)
-      .setMimeType(ContentService.MimeType.TEXT);
-  } finally {
-    lock.releaseLock(); // Libera o bloqueio, crucial
-  }
-}
+
+    .card {
+      background: white;
+      padding: 40px 25px;
+      border-radius: 15px;
+      box-shadow: var(--sombra);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+      position: relative;
+      border: 1px solid #eee;
+      overflow: hidden;
+    }
+
+    /* Ramos nos cantos (SVG para leveza) */
+    .ramo {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .top-left { top: -5px; left: -5px; transform: rotate(0deg); }
+    .top-right { top: -5px; right: -5px; transform: rotate(90deg); }
+    .bottom-left { bottom: -5px; left: -5px; transform: rotate(-90deg); }
+    .bottom-right { bottom: -5px; right: -5px; transform: rotate(180deg); }
+
+    .fade-in { animation: fadeIn 0.6s ease forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      color: var(--verde-escuro);
+      font-size: 24px;
+      margin-bottom: 5px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .subtitulo { font-size: 11px; color: #666; margin-bottom: 15px; letter-spacing: 2px; }
+
+    .nomes {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(32px, 8vw, 38px);
+      margin: 15px 0;
+      background: var(--dourado-gradiente);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+
+    .nomes span { display: block; width: 100%; }
+    .ampersand { font-size: 24px; margin: 5px 0; display: block; }
+
+    .divisor { height: 1px; width: 60px; background: var(--dourado-gradiente); margin: 15px auto; }
+
+    input, select {
+      padding: 14px; margin: 8px 0;
+      font-size: 16px; width: 100%;
+      border-radius: 8px; border: 1px solid #ddd;
+      background-color: #f9f9f9;
+      outline-color: var(--verde-medio);
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 16px 30px;
+      font-size: 14px; font-weight: 600;
+      text-transform: uppercase;
+      background-color: var(--verde-medio);
+      color: white;
+      border: none; border-radius: 50px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    button:disabled { background-color: #ccc; cursor: not-allowed; }
+    button:active:not(:disabled) { transform: scale(0.98); }
+
+    .hidden { display: none; }
+
+    .mensagem-final {
+      font-size: 18px; margin-top: 15px;
+      color: var(--verde-escuro);
+      line-height: 1.6; font-style: italic;
+    }
+
+    .icon-celebration {
+      font-size: 50px; margin-bottom: 10px;
+      display: block;
+      background: var(--dourado-gradiente);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Página 1 -->
+  <div id="pagina1" class="card fade-in">
+    <!-- SVG dos Ramos Dourados nos Cantos -->
+    <svg class="ramo top-left" viewBox="0 0 100 100"><path d="M10,10 Q30,10 40,40 Q10,30 10,10 M40,40 Q60,20 80,10 M40,40 Q20,60 10,80" fill="none" stroke="var(--dourado-ramos)" stroke-width="3"/></svg>
+    <svg class="ramo top-right" viewBox="0 0 100 100"><path d="M10,10 Q30,10 40,40 Q10,30 10,10 M40,40 Q60,20 80,10 M40,40 Q20,60 10,80" fill="none" stroke="var(--dourado-ramos)" stroke-width="3"/></svg>
+    <svg class="ramo bottom-left" viewBox="0 0 100 100"><path d="M10,10 Q30,10 40,40 Q10,30 10,10 M40,40 Q60,20 80,10 M40,40 Q20,60 10,80" fill="none" stroke="var(--dourado-ramos)" stroke-width="3"/></svg>
+    <svg class="ramo bottom-right" viewBox="0 0 100 100"><path d="M10,10 Q30,10 40,40 Q10,30 10,10 M40,40 Q60,20 80,10 M40,40 Q20,60 10,80" fill="none" stroke="var(--dourado-ramos)" stroke-width="3"/></svg>
+
+    <div class="subtitulo">COMEMORAMOS NOSSAS</div>
+    <h1>Bodas de Ouro</h1>
+    <div class="divisor"></div>
+    <div class="nomes">
+      <span>José Angelo</span>
+      <span class="ampersand">&</span>
+      <span>Maria Aparecida</span>
+    </div>
+    <div class="divisor"></div>
+    <p style="color: #666; font-size: 0.85em; margin: 15px 0;">50 anos de amor e cumplicidade</p>
+    <button onclick="irParaFormulario()">Confirmar Presença</button>
+  </div>
+
+  <!-- Página 2 -->
+  <div id="pagina2" class="card hidden">
+    <h1>Confirmação</h1>
+    <p style="color: #666; margin-bottom: 10px; font-size: 0.9em;">Será uma alegria ter você conosco!</p>
+    <input type="text" placeholder="Seu nome completo" id="nome">
+    <select id="quantidade">
+      <option value="">Quantas pessoas?</option>
+      <option value="1">Apenas eu (1)</option>
+      <option value="2">2 pessoas</option>
+      <option value="3">3 pessoas</option>
+      <option value="4">4 pessoas</option>
+      <option value="5">5 pessoas</option>
+    </select>
+    <button onclick="confirmar()" id="btnConfirmar">Confirmar Agora</button>
+  </div>
+
+  <!-- Página 3 -->
+  <div id="pagina3" class="card hidden">
+    <span class="icon-celebration">⚭</span>
+    <h1>Confirmado!</h1>
+    <div class="mensagem-final" id="mensagemFinal"></div>
+    <div class="divisor"></div>
+    <p style="font-size: 11px; color: #999;">Obrigado por fazer parte da nossa história.</p>
+  </div>
+
+  <script>
+    // --- SEU LINK DE IMPLANTAÇÃO JÁ INTEGRADO AQUI ---
+    const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbxYFff9bV7MsxYZspEY22BMIsM2XDhqQ2yBloPvUkwCrgvn4wEb-mBIxJSIWn1Pr5Aq/exec";
+
+    function irParaFormulario() {
+      document.getElementById("pagina1").classList.add("hidden");
+      const p2 = document.getElementById("pagina2");
+      p2.classList.remove("hidden");
+      p2.classList.add("fade-in");
+    }
+
+    function confirmar() {
+      let nome = document.getElementById("nome").value;
+      let qtd = document.getElementById("quantidade").value;
+      let btn = document.getElementById("btnConfirmar");
+
+      if (nome.trim() === "" || qtd === "") {
+        alert("Por favor, preencha seu nome e a quantidade.");
+        return;
+      }
+
+      // Feedback visual
+      btn.innerText = "Enviando...";
+      btn.disabled = true;
+
+      // Monta a URL completa para o envio via GET (nome=...&quantidade=...)
+      const urlEnvio = `${URL_GOOGLE_SCRIPT}?nome=${encodeURIComponent(nome)}&quantidade=${encodeURIComponent(qtd)}`;
+
+      // Envia os dados para a planilha usando fetch com modo 'no-cors' (MÉTODO GET DEFINTIVO)
+      fetch(urlEnvio, {
+        method: 'GET',
+        mode: 'no-cors' // Imprescindível para o Google Apps Script
+      })
+      .then(() => {
+        // Transição de página (assumimos sucesso com 'no-cors')
+        // O modo 'no-cors' não permite ler o texto de resposta, mas a requisição CHEGA no script.
+        document.getElementById("pagina2").classList.add("hidden");
+        const p3 = document.getElementById("pagina3");
+        p3.classList.remove("hidden");
+        p3.classList.add("fade-in");
+
+        // Atualiza a mensagem final
+        document.getElementById("mensagemFinal").innerHTML =
+          "<strong>" + nome + "</strong>, sua presença foi confirmada para <strong>" + qtd + " pessoa(s)</strong>.<br><br>Aguardamos você no dia 25 de JULHO!";
+      })
+      .catch(error => {
+        // Erro real na requisição (ex: sem internet)
+        console.error('Erro de conexão:', error);
+        alert("Houve um erro de conexão ao enviar sua confirmação. Por favor, tente novamente.");
+        btn.innerText = "Confirmar Agora";
+        btn.disabled = false;
+      });
+    }
+  </script>
+</body>
+</html>
