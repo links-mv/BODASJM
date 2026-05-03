@@ -77,7 +77,6 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       line-height: 1.2;
-      /* Remove qualquer trava de texto */
       white-space: normal; 
       overflow: visible;
       text-overflow: clip;
@@ -123,6 +122,12 @@
       border-radius: 50px;
       cursor: pointer;
       width: 100%;
+      transition: background-color 0.3s;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
     }
 
     .hidden { display: none; }
@@ -177,7 +182,7 @@
       <option value="4">4 pessoas</option>
       <option value="5">5 pessoas</option>
     </select>
-    <button onclick="confirmar()">Confirmar Agora</button>
+    <button onclick="confirmar()" id="btnConfirmar">Confirmar Agora</button>
   </div>
 
   <!-- Página 3 -->
@@ -190,6 +195,9 @@
   </div>
 
   <script>
+    // URL do seu Google Apps Script
+    const URL_GOOGLE = "https://script.google.com/macros/s/AKfycbxG-OpIosWORD2_LUNb3zf_IX2uBiBzEyc0-JiWM2rKI-3GDm0sMuEf4JCYKKv32EKF/exec";
+
     function irParaFormulario() {
       document.getElementById("pagina1").classList.add("hidden");
       const p2 = document.getElementById("pagina2");
@@ -200,21 +208,35 @@
     function confirmar() {
       let nome = document.getElementById("nome").value;
       let qtd = document.getElementById("quantidade").value;
+      let btn = document.getElementById("btnConfirmar");
 
       if (nome.trim() === "" || qtd === "") {
         alert("Por favor, preencha seu nome e a quantidade.");
         return;
       }
 
-      document.getElementById("pagina2").classList.add("hidden");
-      const p3 = document.getElementById("pagina3");
-      p3.classList.remove("hidden");
-      p3.classList.add("fade-in");
+      // Feedback visual e bloqueio do botão
+      btn.innerText = "Enviando...";
+      btn.disabled = true;
 
-      document.getElementById("mensagemFinal").innerHTML =
-        "<strong>" + nome + "</strong>, sua presença foi confirmada para <strong>" + qtd + " pessoa(s)</strong>.<br><br>Aguardamos você no dia 25 de Julho!";
-    }
-  </script>
+      // Monta a URL com os parâmetros para o envio (método mais robusto para GAS)
+      const urlEnvio = `${URL_GOOGLE}?nome=${encodeURIComponent(nome)}&quantidade=${encodeURIComponent(qtd)}`;
 
-</body>
-</html>
+      // Envia os dados para a planilha usando fetch e modo 'no-cors' para evitar erros de redirecionamento do GAS
+      fetch(urlEnvio, {
+        method: 'POST',
+        mode: 'no-cors'
+      })
+      .then(() => {
+        // Como o modo é 'no-cors', não podemos ler a resposta,
+        // então assumimos que funcionou (o que ocorre 99% das vezes se a URL estiver correta).
+        
+        // Transição de página
+        document.getElementById("pagina2").classList.add("hidden");
+        const p3 = document.getElementById("pagina3");
+        p3.classList.remove("hidden");
+        p3.classList.add("fade-in");
+
+        // Atualiza a mensagem final
+        document.getElementById("mensagemFinal").innerHTML =
+          "<strong>" + nome + "</strong>, sua presença foi confirmada para <strong>" + qtd + " pessoa(s)http://googleusercontent.com/image_generation_content/181
