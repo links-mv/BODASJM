@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Bodas de Ouro - José & Maria</title>
 
   <!-- Fontes elegantes -->
@@ -12,102 +12,110 @@
     :root {
       --verde-escuro: #0a3622;
       --verde-medio: #198754;
-      /* Dourado ajustado para tons mais escuros e ricos */
       --dourado: linear-gradient(45deg, #a67c00, #d4af37, #b8860b, #d4af37, #a67c00);
-      --sombra: 0 15px 35px rgba(0,0,0,0.3);
+      --sombra: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
       margin: 0;
+      padding: 0;
       font-family: 'Poppins', sans-serif;
       background: radial-gradient(circle at center, #1e4d35 0%, #0a2417 100%);
       height: 100vh;
+      /* Previne scroll lateral e ajuda no mobile */
+      height: -webkit-fill-available; 
       display: flex;
       justify-content: center;
       align-items: center;
       overflow: hidden;
     }
 
-    /* Detalhe de borda dourada sutil no fundo */
-    body::before {
-      content: "";
-      position: absolute;
-      top: 20px; bottom: 20px; left: 20px; right: 20px;
-      border: 1px solid rgba(212, 175, 55, 0.15);
-      pointer-events: none;
+    html {
+      height: -webkit-fill-available;
     }
 
     .card {
       background: white;
-      padding: 50px 40px;
+      padding: 40px 25px;
       border-radius: 15px;
       box-shadow: var(--sombra);
       text-align: center;
-      width: 450px;
-      max-width: 90%;
+      width: 90%;
+      max-width: 420px;
       position: relative;
-      transition: all 0.5s ease;
+      transition: all 0.4s ease-in-out;
       border: 1px solid #eee;
     }
 
-    /* Efeito de transição suave */
     .fade-in {
-      animation: fadeIn 0.8s ease forwards;
+      animation: fadeIn 0.6s ease forwards;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
     }
 
     h1 {
       font-family: 'Playfair Display', serif;
       color: var(--verde-escuro);
-      font-size: 28px;
-      margin-bottom: 10px;
-      letter-spacing: 2px;
+      font-size: 24px;
+      margin-bottom: 5px;
+      letter-spacing: 1px;
       text-transform: uppercase;
     }
 
     .subtitulo {
-      font-size: 14px;
+      font-size: 11px;
       color: #666;
-      margin-bottom: 30px;
-      letter-spacing: 3px;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
     }
 
     .nomes {
       font-family: 'Great Vibes', cursive;
-      font-size: 38px;
-      margin: 25px 0;
+      /* Fonte fluida: ajusta entre 28px e 36px dependendo da tela */
+      font-size: clamp(28px, 8vw, 36px);
+      margin: 20px 0;
       background: var(--dourado);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       line-height: 1.2;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .divisor {
-      height: 2px;
-      width: 60px;
+      height: 1px;
+      width: 50px;
       background: var(--dourado);
-      margin: 20px auto;
+      margin: 15px auto;
+    }
+
+    .input-group {
+      margin-top: 20px;
     }
 
     input, select {
-      padding: 12px;
-      margin: 10px 0;
-      font-size: 15px;
+      padding: 14px;
+      margin: 8px 0;
+      font-size: 16px; /* Evita zoom automático no iOS ao focar */
       width: 100%;
-      border-radius: 5px;
+      border-radius: 8px;
       border: 1px solid #ddd;
-      box-sizing: border-box;
       outline-color: var(--verde-medio);
+      background-color: #f9f9f9;
     }
 
     button {
-      margin-top: 20px;
-      padding: 15px 35px;
+      margin-top: 15px;
+      padding: 16px 30px;
       font-size: 14px;
       font-weight: 600;
       text-transform: uppercase;
@@ -117,14 +125,13 @@
       border: none;
       border-radius: 50px;
       cursor: pointer;
+      width: 100%; /* Botão largo no mobile é melhor para clicar */
       transition: 0.3s;
-      box-shadow: 0 4px 15px rgba(25, 135, 84, 0.3);
     }
 
-    button:hover {
+    button:active {
+      transform: scale(0.98);
       background-color: var(--verde-escuro);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(25, 135, 84, 0.4);
     }
 
     .hidden {
@@ -132,22 +139,26 @@
     }
 
     .mensagem-final {
-      font-size: 18px;
-      margin-top: 20px;
+      font-size: 17px;
+      margin-top: 15px;
       color: var(--verde-escuro);
-      line-height: 1.6;
-      font-style: italic;
+      line-height: 1.5;
     }
 
-    /* Estilização para o ícone de alianças ou flor */
     .icon-celebration {
-      font-size: 50px; /* Aumentei um pouco o tamanho */
+      font-size: 45px;
       margin-bottom: 10px;
       display: block;
-      /* Aplica o degradê dourado ao símbolo */
       background: var(--dourado);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+    }
+
+    /* Ajustes para telas bem pequenas (iPhone SE, etc) */
+    @media (max-height: 600px) {
+      .card { padding: 25px 20px; }
+      .nomes { margin: 10px 0; }
+      h1 { font-size: 20px; }
     }
   </style>
 </head>
@@ -158,49 +169,38 @@
   <div id="pagina1" class="card fade-in">
     <div class="subtitulo">COMEMORAMOS NOSSAS</div>
     <h1>Bodas de Ouro</h1>
-    
     <div class="divisor"></div>
-
-    <div class="nomes">
-      José Angelo & Maria Aparecida
-    </div>
-
+    <div class="nomes">José Angelo & Maria Aparecida</div>
     <div class="divisor"></div>
-
-    <p style="color: #666; font-size: 0.9em; margin-top: 25px;">50 anos de Amor e Cumplicidade</p>
-
+    <p style="color: #666; font-size: 0.85em; margin: 15px 0 20px 0;">50 anos de amor e cumplicidade</p>
     <button onclick="irParaFormulario()">Confirmar Presença</button>
   </div>
 
   <!-- Página 2 -->
   <div id="pagina2" class="card hidden">
     <h1>Confirmação</h1>
-    <p style="color: #666; margin-bottom: 20px;">Será uma alegria ter você conosco!</p>
-
-    <input type="text" placeholder="Seu nome completo" id="nome">
-
-    <select id="quantidade">
-      <option value="">Quantas pessoas estarão presentes?</option>
-      <option value="1">Apenas eu (1)</option>
-      <option value="2">2 pessoas</option>
-      <option value="3">3 pessoas</option>
-      <option value="4">4 pessoas</option>
-      <option value="5">5 pessoas</option>
-    </select>
-
+    <p style="color: #666; margin-bottom: 15px; font-size: 0.9em;">Será uma alegria ter você conosco!</p>
+    <div class="input-group">
+      <input type="text" placeholder="Seu nome completo" id="nome" autocomplete="name">
+      <select id="quantidade">
+        <option value="">Quantas pessoas estarão presentes?</option>
+        <option value="1">Apenas eu (1)</option>
+        <option value="2">2 pessoas</option>
+        <option value="3">3 pessoas</option>
+        <option value="4">4 pessoas</option>
+        <option value="5">5 pessoas</option>
+      </select>
+    </div>
     <button onclick="confirmar()">Confirmar Agora</button>
   </div>
 
   <!-- Página 3 -->
   <div id="pagina3" class="card hidden">
-    <!-- Ícone de Alianças Entrelaçadas com degradê dourado -->
     <span class="icon-celebration">⚭</span>
     <h1>Confirmado!</h1>
-
     <div class="mensagem-final" id="mensagemFinal"></div>
-    
     <div class="divisor"></div>
-    <p style="font-size: 12px; color: #999;">Obrigado por fazer parte da nossa história.</p>
+    <p style="font-size: 11px; color: #999;">Obrigado por fazer parte da nossa história.</p>
   </div>
 
   <script>
@@ -209,11 +209,12 @@
       const p2 = document.getElementById("pagina2");
       
       p1.style.opacity = "0";
+      p1.style.transform = "scale(0.9)";
       setTimeout(() => {
         p1.classList.add("hidden");
         p2.classList.remove("hidden");
         p2.classList.add("fade-in");
-      }, 400);
+      }, 300);
     }
 
     function confirmar() {
@@ -229,16 +230,16 @@
       const p3 = document.getElementById("pagina3");
 
       p2.style.opacity = "0";
+      p2.style.transform = "scale(0.9)";
       
       setTimeout(() => {
         p2.classList.add("hidden");
         p3.classList.remove("hidden");
         p3.classList.add("fade-in");
 
-        /* Atualizado: JULHO em maiúsculo */
         document.getElementById("mensagemFinal").innerHTML =
-          "<strong>" + nome + "</strong>, sua presença foi confirmada para <strong>" + qtd + " pessoa(s)</strong>.<br><br>Aguardamos você no dia 25 de Julho!";
-      }, 400);
+          "<strong>" + nome + "</strong>, sua presença foi confirmada para <strong>" + qtd + " pessoa(s)</strong>.<br><br>Aguardamos você no dia 25 de JULHO!";
+      }, 300);
     }
   </script>
 
