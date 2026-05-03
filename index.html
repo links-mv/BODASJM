@@ -44,13 +44,16 @@
       border: 1px solid #eee;
     }
 
-    .fade-in {
-      animation: fadeIn 0.6s ease forwards;
+    /* Animação suave para transição entre páginas */
+    .slide-fade {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.5s ease-out, transform 0.5s ease-out;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .slide-fade-in {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     h1 {
@@ -153,7 +156,7 @@
 <body>
 
   <!-- Página 1 -->
-  <div id="pagina1" class="card fade-in">
+  <div id="pagina1" class="card slide-fade slide-fade-in">
     <div class="subtitulo">COMEMORAMOS NOSSAS</div>
     <h1>Bodas de Ouro</h1>
     <div class="divisor"></div>
@@ -170,7 +173,7 @@
   </div>
 
   <!-- Página 2 -->
-  <div id="pagina2" class="card hidden">
+  <div id="pagina2" class="card hidden slide-fade">
     <h1>Confirmação</h1>
     <p style="color: #666; margin-bottom: 10px; font-size: 0.9em;">Será uma alegria ter você conosco!</p>
     <input type="text" placeholder="Seu nome completo" id="nome">
@@ -186,7 +189,7 @@
   </div>
 
   <!-- Página 3 -->
-  <div id="pagina3" class="card hidden">
+  <div id="pagina3" class="card hidden slide-fade">
     <span class="icon-celebration">⚭</span>
     <h1>Confirmado!</h1>
     <div class="mensagem-final" id="mensagemFinal"></div>
@@ -195,14 +198,24 @@
   </div>
 
   <script>
-    // URL do seu Google Apps Script
+    // URL do seu Google Apps Script (certifique-se que ela termina em /exec)
     const URL_GOOGLE = "https://script.google.com/macros/s/AKfycbxG-OpIosWORD2_LUNb3zf_IX2uBiBzEyc0-JiWM2rKI-3GDm0sMuEf4JCYKKv32EKF/exec";
 
     function irParaFormulario() {
-      document.getElementById("pagina1").classList.add("hidden");
-      const p2 = document.getElementById("pagina2");
-      p2.classList.remove("hidden");
-      p2.classList.add("fade-in");
+      // Inicia a transição de saída da página 1
+      const p1 = document.getElementById("pagina1");
+      p1.classList.remove("slide-fade-in");
+      
+      // Espera a animação de saída e troca de página
+      setTimeout(() => {
+        p1.classList.add("hidden");
+        
+        const p2 = document.getElementById("pagina2");
+        p2.classList.remove("hidden");
+        // Força o navegador a renderizar o elemento antes de iniciar a animação
+        void p2.offsetWidth; 
+        p2.classList.add("slide-fade-in");
+      }, 500); 
     }
 
     function confirmar() {
@@ -219,24 +232,44 @@
       btn.innerText = "Enviando...";
       btn.disabled = true;
 
-      // Monta a URL com os parâmetros para o envio (método mais robusto para GAS)
+      // Monta a URL completa para o envio via método GET
       const urlEnvio = `${URL_GOOGLE}?nome=${encodeURIComponent(nome)}&quantidade=${encodeURIComponent(qtd)}`;
 
       // Envia os dados para a planilha usando fetch e modo 'no-cors' para evitar erros de redirecionamento do GAS
       fetch(urlEnvio, {
-        method: 'POST',
-        mode: 'no-cors'
+        method: 'GET',
+        mode: 'no-cors' // Essencial para evitar erros de CORS com o Google Apps Script
       })
       .then(() => {
         // Como o modo é 'no-cors', não podemos ler a resposta,
-        // então assumimos que funcionou (o que ocorre 99% das vezes se a URL estiver correta).
+        // então assumimos que funcionou.
         
-        // Transição de página
-        document.getElementById("pagina2").classList.add("hidden");
-        const p3 = document.getElementById("pagina3");
-        p3.classList.remove("hidden");
-        p3.classList.add("fade-in");
+        // Inicia a transição de saída da página 2
+        const p2 = document.getElementById("pagina2");
+        p2.classList.remove("slide-fade-in");
+        
+        // Espera a animação de saída e troca de página
+        setTimeout(() => {
+          p2.classList.add("hidden");
+          
+          const p3 = document.getElementById("pagina3");
+          p3.classList.remove("hidden");
+          void p3.offsetWidth;
+          p3.classList.add("slide-fade-in");
 
-        // Atualiza a mensagem final
-        document.getElementById("mensagemFinal").innerHTML =
-          "<strong>" + nome + "</strong>, sua presença foi confirmada para <strong>" + qtd + " pessoa(s)http://googleusercontent.com/image_generation_content/181
+          // Atualiza a mensagem final
+          document.getElementById("mensagemFinal").innerHTML =
+            "<strong>" + nome + "</strong>, sua presença foi confirmada para <strong>" + qtd + " pessoa(s)</strong>.<br><br>Aguardamos você no dia 25 de JULHO!";
+        }, 500);
+      })
+      .catch(err => {
+        // Caso haja um erro real (como falta de internet)
+        alert("Houve um erro ao enviar sua confirmação. Por favor, tente novamente.");
+        btn.innerText = "Confirmar Agora";
+        btn.disabled = false;
+      });
+    }
+  </script>
+
+</body>
+</html>
