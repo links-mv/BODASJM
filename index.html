@@ -27,7 +27,6 @@
       font-family: 'Poppins', sans-serif;
       background: radial-gradient(circle at center, #1e4d35 0%, #0a2417 100%);
       height: 100vh;
-      /* Previne scroll lateral e ajuda no mobile */
       height: -webkit-fill-available; 
       display: flex;
       justify-content: center;
@@ -35,18 +34,14 @@
       overflow: hidden;
     }
 
-    html {
-      height: -webkit-fill-available;
-    }
-
     .card {
       background: white;
-      padding: 40px 25px;
+      padding: 35px 25px;
       border-radius: 15px;
       box-shadow: var(--sombra);
       text-align: center;
       width: 90%;
-      max-width: 420px;
+      max-width: 400px;
       position: relative;
       transition: all 0.4s ease-in-out;
       border: 1px solid #eee;
@@ -73,39 +68,39 @@
     .subtitulo {
       font-size: 11px;
       color: #666;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       letter-spacing: 2px;
     }
 
     .nomes {
       font-family: 'Great Vibes', cursive;
-      /* Fonte fluida: ajusta entre 28px e 36px dependendo da tela */
-      font-size: clamp(28px, 8vw, 36px);
-      margin: 20px 0;
+      font-size: 36px;
+      margin: 15px 0;
       background: var(--dourado);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      line-height: 1.2;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      line-height: 1.1;
+      /* Removido o nowrap para permitir a quebra */
+      display: block; 
+    }
+
+    .nomes span {
+      font-size: 28px; /* O "&" um pouco menor */
+      display: block;
+      margin: 5px 0;
     }
 
     .divisor {
       height: 1px;
       width: 50px;
       background: var(--dourado);
-      margin: 15px auto;
-    }
-
-    .input-group {
-      margin-top: 20px;
+      margin: 10px auto;
     }
 
     input, select {
       padding: 14px;
       margin: 8px 0;
-      font-size: 16px; /* Evita zoom automático no iOS ao focar */
+      font-size: 16px;
       width: 100%;
       border-radius: 8px;
       border: 1px solid #ddd;
@@ -125,13 +120,8 @@
       border: none;
       border-radius: 50px;
       cursor: pointer;
-      width: 100%; /* Botão largo no mobile é melhor para clicar */
+      width: 100%;
       transition: 0.3s;
-    }
-
-    button:active {
-      transform: scale(0.98);
-      background-color: var(--verde-escuro);
     }
 
     .hidden {
@@ -154,10 +144,9 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* Ajustes para telas bem pequenas (iPhone SE, etc) */
-    @media (max-height: 600px) {
-      .card { padding: 25px 20px; }
-      .nomes { margin: 10px 0; }
+    @media (max-height: 650px) {
+      .card { padding: 20px; }
+      .nomes { font-size: 32px; margin: 10px 0; }
       h1 { font-size: 20px; }
     }
   </style>
@@ -170,9 +159,13 @@
     <div class="subtitulo">COMEMORAMOS NOSSAS</div>
     <h1>Bodas de Ouro</h1>
     <div class="divisor"></div>
-    <div class="nomes">José Angelo & Maria Aparecida</div>
+    <div class="nomes">
+      José Angelo 
+      <span>&</span> 
+      Maria Aparecida
+    </div>
     <div class="divisor"></div>
-    <p style="color: #666; font-size: 0.85em; margin: 15px 0 20px 0;">50 anos de amor e cumplicidade</p>
+    <p style="color: #666; font-size: 0.85em; margin: 15px 0;">50 anos de amor e cumplicidade</p>
     <button onclick="irParaFormulario()">Confirmar Presença</button>
   </div>
 
@@ -180,17 +173,15 @@
   <div id="pagina2" class="card hidden">
     <h1>Confirmação</h1>
     <p style="color: #666; margin-bottom: 15px; font-size: 0.9em;">Será uma alegria ter você conosco!</p>
-    <div class="input-group">
-      <input type="text" placeholder="Seu nome completo" id="nome" autocomplete="name">
-      <select id="quantidade">
-        <option value="">Quantas pessoas estarão presentes?</option>
-        <option value="1">Apenas eu (1)</option>
-        <option value="2">2 pessoas</option>
-        <option value="3">3 pessoas</option>
-        <option value="4">4 pessoas</option>
-        <option value="5">5 pessoas</option>
-      </select>
-    </div>
+    <input type="text" placeholder="Seu nome completo" id="nome">
+    <select id="quantidade">
+      <option value="">Quantas pessoas?</option>
+      <option value="1">Apenas eu (1)</option>
+      <option value="2">2 pessoas</option>
+      <option value="3">3 pessoas</option>
+      <option value="4">4 pessoas</option>
+      <option value="5">5 pessoas</option>
+    </select>
     <button onclick="confirmar()">Confirmar Agora</button>
   </div>
 
@@ -207,9 +198,7 @@
     function irParaFormulario() {
       const p1 = document.getElementById("pagina1");
       const p2 = document.getElementById("pagina2");
-      
       p1.style.opacity = "0";
-      p1.style.transform = "scale(0.9)";
       setTimeout(() => {
         p1.classList.add("hidden");
         p2.classList.remove("hidden");
@@ -230,13 +219,10 @@
       const p3 = document.getElementById("pagina3");
 
       p2.style.opacity = "0";
-      p2.style.transform = "scale(0.9)";
-      
       setTimeout(() => {
         p2.classList.add("hidden");
         p3.classList.remove("hidden");
         p3.classList.add("fade-in");
-
         document.getElementById("mensagemFinal").innerHTML =
           "<strong>" + nome + "</strong>, sua presença foi confirmada para <strong>" + qtd + " pessoa(s)</strong>.<br><br>Aguardamos você no dia 25 de JULHO!";
       }, 300);
