@@ -1,8 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" style="color-scheme: light;">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- Força o navegador a entender que o site é apenas LIGHT MODE -->
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  
   <title>Bodas de Ouro - José Ângelo & Maria Aparecida</title>
   
   <!-- Emoji como Logo da Guia (Favicon) -->
@@ -13,6 +17,7 @@
   
   <style>
     :root {
+      color-scheme: light; /* Trava no nível do sistema */
       --verde-escuro: #0a3622;
       --verde-medio: #198754;
       --dourado-ramos: #d4af37;
@@ -25,14 +30,18 @@
     body {
       margin: 0; padding: 0;
       font-family: 'Poppins', sans-serif;
-      background: radial-gradient(circle at center, #1e4d35 0%, #0a2417 100%);
+      /* O !important impede o Android de inverter o gradiente verde */
+      background: radial-gradient(circle at center, #1e4d35 0%, #0a2417 100%) !important;
+      background-color: #0a3622 !important;
       height: 100vh;
       display: flex; justify-content: center; align-items: center;
       overflow: hidden;
+      color: #333;
     }
 
     .card {
-      background: white;
+      background-color: #ffffff !important; /* Força o card a ficar branco */
+      color: #333333 !important; /* Força o texto a ficar escuro */
       padding: 40px 25px;
       border-radius: 15px;
       box-shadow: var(--sombra);
@@ -41,10 +50,10 @@
       max-width: 400px;
       position: relative;
       border: 1px solid #eee;
-      overflow: hidden; /* Mantém os ramos dentro do card */
+      overflow: hidden;
     }
 
-    /* Ramos nos cantos (SVG para leveza) */
+    /* Ramos nos cantos */
     .ramo {
       position: absolute;
       width: 80px;
@@ -63,14 +72,14 @@
 
     h1 {
       font-family: 'Playfair Display', serif;
-      color: var(--verde-escuro);
+      color: var(--verde-escuro) !important;
       font-size: 24px;
       margin-bottom: 5px;
       letter-spacing: 1px;
       text-transform: uppercase;
     }
 
-    .subtitulo { font-size: 11px; color: #666; margin-bottom: 15px; letter-spacing: 2px; }
+    .subtitulo { font-size: 11px; color: #666 !important; margin-bottom: 15px; letter-spacing: 2px; }
 
     .nomes {
       font-family: 'Great Vibes', cursive;
@@ -91,7 +100,8 @@
       padding: 14px; margin: 8px 0;
       font-size: 16px; width: 100%;
       border-radius: 8px; border: 1px solid #ddd;
-      background-color: #f9f9f9;
+      background-color: #f9f9f9 !important;
+      color: #333 !important;
       outline-color: var(--verde-medio);
     }
 
@@ -100,22 +110,22 @@
       padding: 16px 30px;
       font-size: 14px; font-weight: 600;
       text-transform: uppercase;
-      background-color: var(--verde-medio);
-      color: white;
+      background-color: var(--verde-medio) !important;
+      color: white !important;
       border: none; border-radius: 50px;
       cursor: pointer;
       width: 100%;
       transition: background-color 0.3s, transform 0.2s;
     }
 
-    button:disabled { background-color: #ccc; cursor: not-allowed; }
+    button:disabled { background-color: #ccc !important; cursor: not-allowed; }
     button:active:not(:disabled) { transform: scale(0.98); }
 
-    .hidden { display: none; }
+    .hidden { display: none !important; }
 
     .mensagem-final {
       font-size: 18px; margin-top: 15px;
-      color: var(--verde-escuro);
+      color: var(--verde-escuro) !important;
       line-height: 1.6; font-style: italic;
     }
 
@@ -132,7 +142,6 @@
 
   <!-- Página 1 -->
   <div id="pagina1" class="card fade-in">
-    <!-- SVG dos Ramos Dourados nos Cantos -->
     <svg class="ramo top-left" viewBox="0 0 100 100"><path d="M10,10 Q30,10 40,40 Q10,30 10,10 M40,40 Q60,20 80,10 M40,40 Q20,60 10,80" fill="none" stroke="var(--dourado-ramos)" stroke-width="3"/></svg>
     <svg class="ramo top-right" viewBox="0 0 100 100"><path d="M10,10 Q30,10 40,40 Q10,30 10,10 M40,40 Q60,20 80,10 M40,40 Q20,60 10,80" fill="none" stroke="var(--dourado-ramos)" stroke-width="3"/></svg>
     <svg class="ramo bottom-left" viewBox="0 0 100 100"><path d="M10,10 Q30,10 40,40 Q10,30 10,10 M40,40 Q60,20 80,10 M40,40 Q20,60 10,80" fill="none" stroke="var(--dourado-ramos)" stroke-width="3"/></svg>
@@ -177,7 +186,6 @@
   </div>
 
   <script>
-    // URL DE IMPLANTAÇÃO DEFINITIVA DO SEU SCRIPT (Integrada com o link parça)
     const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbwANB_KLCPmz8QWESqNuvgmOLnBW2jGEkk9xXk_N5UcUqfsQbqxjBKoCIejD3mFE-g6/exec";
 
     function irParaFormulario() {
@@ -197,38 +205,27 @@
         return;
       }
 
-      // Feedback visual e bloqueio do botão
       btn.innerText = "Enviando...";
       btn.disabled = true;
 
-      // Monta a URL completa para o envio via método GET (nome=...&quantidade=...)
-      // Usamos GET com mode: no-cors porque é a forma mais robusta e universal 
-      // de enviar dados para o doGet do GAS sem esbarrar em bloqueios do navegador.
       const urlEnvio = `${URL_GOOGLE_SCRIPT}?nome=${encodeURIComponent(nome)}&quantidade=${encodeURIComponent(qtd)}`;
 
-      // Envia os dados para a planilha
       fetch(urlEnvio, {
         method: 'GET',
-        mode: 'no-cors' // Imprescindível para o Google Apps Script
+        mode: 'no-cors'
       })
       .then(() => {
-        // Como o modo é 'no-cors', não podemos ler a resposta de texto,
-        // mas assumimos que chegou (o fetch só falha se não houver conexão real).
-        
-        // Transição de página
         document.getElementById("pagina2").classList.add("hidden");
         const p3 = document.getElementById("pagina3");
         p3.classList.remove("hidden");
         p3.classList.add("fade-in");
 
-        // Atualiza a mensagem final
         document.getElementById("mensagemFinal").innerHTML =
           "<strong>" + nome + "</strong>, sua presença foi confirmada para <strong>" + qtd + " pessoa(s)</strong>.<br><br>Aguardamos você no dia 25 de Julho!";
       })
       .catch(error => {
-        // Caso haja um erro real (como falta de internet ou erro DNS)
         console.error('Erro de conexão:', error);
-        alert("Houve um erro de conexão ao enviar sua confirmação. Por favor, tente novamente.");
+        alert("Houve um erro de conexão. Tente novamente.");
         btn.innerText = "Confirmar Agora";
         btn.disabled = false;
       });
